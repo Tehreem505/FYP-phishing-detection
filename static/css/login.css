@@ -1,0 +1,88 @@
+body {
+    margin: 0;
+    font-family: Arial;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #0a192f;
+    padding: 15px 40px;
+}
+
+.logo {
+    color: white;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links li a {
+    color: white;
+    text-decoration: none;
+}
+
+.nav-links li a:hover {
+    color: #00bcd4;
+}
+
+
+/* SECURITY BANNER */
+.security-banner {
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    color: white;
+}
+
+.secure {
+    background: green;
+}
+
+.warning {
+    background: red;
+}
+
+/* LOGIN UI */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+}
+
+.login-box {
+    background: #f4f4f4;
+    padding: 30px;
+    width: 320px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+}
+
+.login-box button {
+    width: 100%;
+    padding: 10px;
+    background: #00bcd4;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.login-box button:hover {
+    background: #0097a7;
+}
+
+.ssl {
+    margin: 10px 0;
+    font-weight: bold;
+}

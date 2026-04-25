@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>URL Phishing Checker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/url.css') }}">
+</head>
+
+<body>
+
+    {% include 'navbar.html' %}
+
+    <div class="container">
+
+        <h1>URL Phishing Checker</h1>
+
+        <form method="POST" action="/check-url">
+            <input type="text" name="url" placeholder="Paste URL here..." required>
+            <button type="submit">Check URL</button>
+        </form>
+
+        <!-- RESULT BOX -->
+        {% if result %}
+        <div class="result-box {{ result.status|lower }}">
+
+            <h2>Status: {{ result.status }}</h2>
+            <p>Confidence: {{ result.confidence }}%</p>
+
+            <h4>Reasons Found:</h4>
+            <ul>
+                {% for r in result.reasons %}
+                    <li>{{ r }}</li>
+                {% endfor %}
+            </ul>
+
+        </div>
+        {% endif %}
+
+    </div>
+
+</body>
+</html>

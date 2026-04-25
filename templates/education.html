@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Education & Awareness</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/education.css') }}">
+</head>
+
+<body>
+ {% include 'navbar.html' %}
+<div class="container">
+
+    <!-- SECTION 1 -->
+    <h1>What is Phishing?</h1>
+    <p class="center-text">
+        Phishing is a cyber attack where attackers trick users into giving sensitive information 
+        like passwords, credit card details, or personal data by pretending to be a trusted source.
+    </p>
+
+    <div class="image-box">
+        <img src="{{ url_for('static', filename='images/phishing-email.jpg') }}" alt="Phishing Image">
+    </div>
+
+
+    <!-- SECTION 2 -->
+    <h2>Types of Phishing</h2>
+
+    <div class="cards">
+        <div class="card">
+            <h3>Email Phishing</h3>
+            <p>Fake emails pretending to be from trusted companies.</p>
+        </div>
+
+        <div class="card">
+            <h3>URL Phishing</h3>
+            <p>Fake websites that steal login credentials.</p>
+        </div>
+
+        <div class="card">
+            <h3>Smishing</h3>
+            <p>Phishing attacks through SMS messages.</p>
+        </div>
+
+        <div class="card">
+            <h3>Vishing</h3>
+            <p>Voice calls pretending to be official.</p>
+        </div>
+    </div>
+
+
+    <!-- SECTION 3 -->
+    <h2>How to Identify Phishing</h2>
+
+    <ul class="checklist">
+        <li>Check the sender address carefully</li>
+        <li>Hover over links before clicking</li>
+        <li>Look for urgency or threat language</li>
+        <li>Check spelling and grammar mistakes</li>
+        <li>Never share passwords via email</li>
+    </ul>
+
+
+    <!-- SECTION 4 QUIZ -->
+    <h2>Real vs Fake Quiz</h2>
+
+    <div class="quiz-box">
+        <p id="question"></p>
+
+        <button onclick="answer('phishing')">Phishing</button>
+        <button onclick="answer('legit')">Legitimate</button>
+
+        <p id="feedback"></p>
+    </div>
+
+
+    <!-- SECTION 5 -->
+    <h2>Phishing Statistics</h2>
+
+    <div class="stats">
+        <div class="stat">
+            <h2>91%</h2>
+            <p>Attacks start with phishing</p>
+        </div>
+
+        <div class="stat">
+            <h2>3.4B</h2>
+            <p>Emails sent daily</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- JS -->
+<script src="{{ url_for('static', filename='js/education.js') }}"></script>
+
+</body>
+</html>

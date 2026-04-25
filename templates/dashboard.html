@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+
+<body>
+<!-- 
+    {% include 'navbar.html' %} -->
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <h2>Welcome, User</h2>
+        <button>Logout</button>
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="cards">
+
+        <div class="card">
+            <h3>URLs Checked</h3>
+            <h1>{{ urls }}</h1>
+        </div>
+
+        <div class="card">
+            <h3>Emails Scanned</h3>
+            <h1>{{ emails }}</h1>
+        </div>
+
+        <div class="card">
+            <h3>Threats Blocked</h3>
+            <h1>{{ threats }}</h1>
+        </div>
+
+    </div>
+
+    <!-- THREAT LEVEL -->
+    <div class="progress-section">
+        <h3>Weekly Threat Activity</h3>
+        <div class="progress-bar">
+            <div class="fill"></div>
+        </div>
+    </div>
+
+    <!-- RECENT ACTIVITY -->
+    <div class="table-section">
+        <h3>Recent Activity</h3>
+
+        <table>
+            <tr>
+                <th>#</th>
+                <th>User</th>
+                <th>Time</th>
+                <th>Status</th>
+            </tr>
+
+            {% for log in logs %}
+            <tr>
+                <td>{{ log[0] }}</td>
+                <td>{{ log[1] }}</td>
+                <td>{{ log[2] }}</td>
+                <td>{{ log[3] }}</td>
+            </tr>
+            {% endfor %}
+
+        </table>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="actions">
+        <a href="/url-checker">Check New URL</a>
+        <a href="/email-scanner">Scan New Email</a>
+        <a href="/report">View Report</a>
+    </div>
+
+</body>
+</html>

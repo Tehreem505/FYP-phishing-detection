@@ -1,0 +1,74 @@
+body {
+    margin: 0;
+    font-family: Arial;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #0a192f;
+    padding: 15px 40px;
+}
+
+.logo {
+    color: white;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links li a {
+    color: white;
+    text-decoration: none;
+}
+
+.nav-links li a:hover {
+    color: #00bcd4;
+}
+
+.container {
+    text-align: center;
+    margin-top: 40px;
+}
+
+input, textarea {
+    width: 400px;
+    padding: 10px;
+    margin: 5px;
+}
+
+textarea {
+    height: 150px;
+}
+
+button {
+    padding: 10px 20px;
+    background: #00bcd4;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.result-box {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f4f4f4;
+    display: inline-block;
+    text-align: left;
+}
+
+.email-preview {
+    background: white;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.red {
+    background: red;
+    color: white;
+    padding: 2px;
+}

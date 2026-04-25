@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Phishing Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+    {% include 'navbar.html' %}
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <h1>Protect Your Banking From Phishing</h1>
+        <p>Our system helps you detect phishing URLs and emails instantly to keep your financial data safe.</p>
+
+        <div class="hero-buttons">
+            <a href="/url-checker" class="btn">Try URL Checker</a>
+            <a href="/email-scanner" class="btn secondary">Scan Email</a>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="how-it-works">
+        <h2>How It Works</h2>
+
+        <div class="cards">
+            <div class="card">
+                <i class="fas fa-link"></i>
+                <h3>Paste URL</h3>
+                <p>Enter any suspicious link and we analyze it.</p>
+            </div>
+
+            <div class="card">
+                <i class="fas fa-link"></i>
+                <h3>Scan Email</h3>
+                <p>Paste email content and detect phishing patterns.</p>
+            </div>
+
+            <div class="card">
+                <i class="fas fa-link"></i>
+                <h3>Get Result</h3>
+                <p>Receive instant results with risk level.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATISTICS -->
+    <section class="stats">
+        <div class="stat-box">
+            <h2>500+</h2>
+            <p>Phishing URLs Detected</p>
+        </div>
+
+        <div class="stat-box">
+            <h2>98%</h2>
+            <p>Accuracy Rate</p>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>About | Contact</p>
+        <p>© 2025 PhishGuard. All rights reserved.</p>
+    </footer>
+
+
+    
+</body>
+</html>

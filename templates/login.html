@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simulated Bank Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+
+<body>
+
+    {% include 'navbar.html' %}
+
+    <!-- SECURITY BANNER -->
+    <div id="securityBanner" class="security-banner"></div>
+
+    <!-- LOGIN CONTAINER -->
+    <div class="login-container">
+
+        <div class="login-box">
+
+            <h2>Bank Login</h2>
+
+            <!-- SSL Indicator -->
+            <div id="sslStatus" class="ssl"></div>
+
+            <form id="loginForm" method="POST" action="/login">
+
+                <input type="text" name="username" placeholder="Username" required>
+
+                <input type="password" name="password" placeholder="Password" required>
+
+                <label>
+                    <input type="checkbox" name="remember">
+                    Remember Me
+                </label>
+
+                <button type="submit">Login</button>
+
+            </form>
+
+            <p><a href="/register">Register</a></p>
+
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+
+</body>
+</html>

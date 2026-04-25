@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+</head>
+
+
+<body>
+
+    {% include 'navbar.html' %}
+    
+<div class="container">
+
+    <!-- Top -->
+    <div class="top-bar">
+        <h2>Admin Panel</h2>
+        <button class="logout-btn">Logout</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="cards">
+        <div class="card">
+            <h3 id="totalUsers">0</h3>
+            <p>Total Users</p>
+        </div>
+        <div class="card">
+            <h3 id="totalScans">0</h3>
+            <p>Total Scans</p>
+        </div>
+        <div class="card">
+            <h3 id="totalThreats">0</h3>
+            <p>Threats Found</p>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <input type="text" id="searchInput" class="search-box" placeholder="Search logs...">
+
+    <!-- Logs Table -->
+    <h3>Scan Logs</h3>
+    <table id="logTable">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Type</th>
+                <th>Input</th>
+                <th>Result</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody id="logBody"></tbody>
+    </table>
+
+    <!-- Add Keyword -->
+    <div class="form-section">
+        <h3>Add Phishing Keyword</h3>
+        <input type="text" id="keyword" placeholder="Enter keyword">
+        <select id="category">
+            <option value="email">Email</option>
+            <option value="url">URL</option>
+        </select>
+        <button onclick="addKeyword()">Submit</button>
+    </div>
+
+    <!-- Add Blacklist URL -->
+    <div class="form-section">
+        <h3>Add Blacklist URL</h3>
+        <input type="text" id="blacklistUrl" placeholder="Enter URL">
+        <button onclick="addBlacklist()">Submit</button>
+    </div>
+
+</div>
+
+<!-- JS -->
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+
+</body>
+</html>

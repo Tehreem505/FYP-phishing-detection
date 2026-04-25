@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reports & Analytics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/report.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Report & Analytics</h2>
+
+    <!-- STATS -->
+    <div class="cards">
+        <div class="card">
+            <h3 id="totalScans">0</h3>
+            <p>Total Scans</p>
+        </div>
+        <div class="card">
+            <h3 id="totalPhishing">0</h3>
+            <p>Phishing</p>
+        </div>
+        <div class="card">
+            <h3 id="totalSafe">0</h3>
+            <p>Safe</p>
+        </div>
+        <div class="card">
+            <h3 id="totalSuspicious">0</h3>
+            <p>Suspicious</p>
+        </div>
+    </div>
+
+    <!-- PIE CHART -->
+    <h3>Scan Results Distribution</h3>
+    <canvas id="pieChart" width="300" height="300"></canvas>
+
+    <!-- BAR CHART -->
+    <h3>Last 7 Days Activity</h3>
+    <canvas id="barChart" width="500" height="300"></canvas>
+
+    <!-- PATTERNS -->
+    <h3>Common Phishing Patterns</h3>
+    <ul id="patternsList"></ul>
+
+    <!-- EXPORT -->
+    <button onclick="exportReport()">Export Report</button>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/report.js') }}"></script>
+
+</body>
+</html>

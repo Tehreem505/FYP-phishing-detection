@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Email Phishing Scanner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/email.css') }}">
+</head>
+
+<body>
+
+    {% include 'navbar.html' %}
+
+    <div class="container">
+
+        <h1>Email Phishing Scanner</h1>
+
+        <form method="POST" action="/scan-email">
+
+            <input type="text" name="sender" placeholder="Sender Email" required>
+
+            <input type="text" name="subject" placeholder="Subject Line" required>
+
+            <textarea name="body" placeholder="Email Body" required></textarea>
+
+            <button type="submit">Scan Email</button>
+
+        </form>
+
+        {% if result %}
+
+        <div class="result-box">
+
+            <h2>Verdict: {{ result.verdict }}</h2>
+            <h3>Risk Score: {{ result.score }}/10</h3>
+
+            <h4>Red Flags Found:</h4>
+            <ul>
+                {% for r in result.flags %}
+                    <li>{{ r }}</li>
+                {% endfor %}
+            </ul>
+
+            <h4>Highlighted Email:</h4>
+            <div class="email-preview">
+                {{ result.highlighted|safe }}
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</body>
+</html>
