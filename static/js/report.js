@@ -1,14 +1,22 @@
-// Load data from backend
+// ==================== AOS INIT ====================
+if (typeof AOS !== 'undefined') {
+    AOS.init({
+        duration: 800,
+        once: true
+    });
+}
+
+// ==================== LOAD DATA ====================
 fetch('/report-data')
 .then(res => res.json())
 .then(data => {
     let logs = data.logs;
 
     if (!logs || logs.length === 0) {
-        document.getElementById("totalScans").innerText = "0";
-        document.getElementById("totalPhishing").innerText = "0";
-        document.getElementById("totalSafe").innerText = "0";
-        document.getElementById("totalSuspicious").innerText = "0";
+        animateCount("totalScans", 0);
+        animateCount("totalPhishing", 0);
+        animateCount("totalSafe", 0);
+        animateCount("totalSuspicious", 0);
         return;
     }
 
@@ -18,108 +26,105 @@ fetch('/report-data')
     console.log("Error loading report data:", err);
 });
 
+// ==================== ANIMATE COUNTERS ====================
+function animateCount(id, value) {
+    if (typeof countUp !== 'undefined') {
+        const counter = new countUp.CountUp(id, value, {
+            duration: 2.5,
+            separator: ','
+        });
+        counter.start();
+    } else {
+        document.getElementById(id).innerText = value;
+    }
+}
 
+// ==================== GENERATE REPORT ====================
 function generateReport(logs) {
-
-    // CALCULATIONS
     let totalScans = logs.length;
+    let phishing = logs.filter(l => l.result && l.result.toLowerCase().includes("phishing")).length;
+    let safe = logs.filter(l => l.result && l.result.toLowerCase().includes("safe")).length;
+    let suspicious = logs.filter(l => l.result && l.result.toLowerCase().includes("suspicious")).length;
 
-    let phishing = logs.filter(l =>
-        l.result && l.result.toLowerCase()
-        .includes("phishing")
-    ).length;
+    // Animated counters
+    animateCount("totalScans", totalScans);
+    animateCount("totalPhishing", phishing);
+    animateCount("totalSafe", safe);
+    animateCount("totalSuspicious", suspicious);
 
-    let safe = logs.filter(l =>
-        l.result && l.result.toLowerCase()
-        .includes("safe")
-    ).length;
-
-    let suspicious = logs.filter(l =>
-        l.result && l.result.toLowerCase()
-        .includes("suspicious")
-    ).length;
-
-    // UPDATE STATS
-    document.getElementById("totalScans").innerText = totalScans;
-    document.getElementById("totalPhishing").innerText = phishing;
-    document.getElementById("totalSafe").innerText = safe;
-    document.getElementById("totalSuspicious").innerText = suspicious;
-
-    // PIE CHART
+    // Charts
     drawPieChart(safe, suspicious, phishing);
-
-    // BAR CHART
     drawBarChart(logs);
-
-    // PATTERNS
     showPatterns(logs);
 }
 
-
+// ==================== PIE CHART (Chart.js) ====================
 function drawPieChart(safe, suspicious, phishing) {
+    const ctx = document.getElementById("pieChart").getContext("2d");
 
-    let canvas = document.getElementById("pieChart");
-    let pie = canvas.getContext("2d");
-
-    pie.clearRect(0, 0, 300, 300);
-
-    let total = safe + suspicious + phishing;
-
-    if (total === 0) {
-        pie.fillStyle = "#ccc";
-        pie.beginPath();
-        pie.arc(150, 150, 100, 0, 2 * Math.PI);
-        pie.fill();
-        return;
-    }
-
-    let data = [
-        { value: safe, color: "#2ecc71" },
-        { value: suspicious, color: "#f39c12" },
-        { value: phishing, color: "#e74c3c" }
-    ];
-
-    let start = 0;
-
-    data.forEach(function(item) {
-        let angle = (item.value / total) * 2 * Math.PI;
-        pie.beginPath();
-        pie.moveTo(150, 150);
-        pie.arc(150, 150, 100, start, start + angle);
-        pie.fillStyle = item.color;
-        pie.fill();
-        start += angle;
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Safe', 'Suspicious', 'Phishing'],
+            datasets: [{
+                data: [safe, suspicious, phishing],
+                backgroundColor: [
+                    'rgba(2, 158, 111, 0.8)',
+                    'rgba(247, 185, 72, 0.8)',
+                    'rgba(240, 52, 52, 0.8)'
+                ],
+                borderColor: [
+                    '#00b894',
+                    '#fdcb6e',
+                    '#ff6b6b'
+                ],
+                borderWidth: 2,
+                hoverOffset: 15
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#e6f1ff',
+                        font: {
+                            family: 'Poppins',
+                            size: 13
+                        },
+                        padding: 15,
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(17, 34, 64, 0.95)',
+                    titleColor: '#00d4ff',
+                    bodyColor: '#e6f1ff',
+                    borderColor: '#00d4ff',
+                    borderWidth: 1,
+                    padding: 12,
+                    titleFont: { family: 'Poppins', size: 13 },
+                    bodyFont: { family: 'Poppins', size: 13 }
+                }
+            },
+            animation: {
+                animateRotate: true,
+                animateScale: true,
+                duration: 2000
+            }
+        }
     });
-
-    // LEGEND
-    pie.fillStyle = "#2ecc71";
-    pie.fillRect(10, 270, 15, 15);
-    pie.fillStyle = "#000";
-    pie.fillText("Safe: " + safe, 30, 282);
-
-    pie.fillStyle = "#f39c12";
-    pie.fillRect(100, 270, 15, 15);
-    pie.fillStyle = "#000";
-    pie.fillText("Suspicious: " + suspicious, 120, 282);
-
-    pie.fillStyle = "#e74c3c";
-    pie.fillRect(220, 270, 15, 15);
-    pie.fillStyle = "#000";
-    pie.fillText("Phishing: " + phishing, 240, 282);
 }
 
-
+// ==================== BAR CHART (Chart.js) ====================
 function drawBarChart(logs) {
+    const ctx = document.getElementById("barChart").getContext("2d");
 
-    let canvas = document.getElementById("barChart");
-    let bar = canvas.getContext("2d");
-
-    bar.clearRect(0, 0, 500, 300);
-
-    // Get last 7 days
     let days = {};
-
-    logs.forEach(function(l) {
+    logs.forEach(l => {
         if (l.date) {
             let day = l.date.substring(0, 10);
             days[day] = (days[day] || 0) + 1;
@@ -130,43 +135,91 @@ function drawBarChart(logs) {
     let values = keys.map(k => days[k]);
 
     if (keys.length === 0) {
-        bar.fillStyle = "#ccc";
-        bar.fillText("No data available", 200, 150);
-        return;
+        keys = ['No Data'];
+        values = [0];
     }
 
-    let maxVal = Math.max(...values);
+    // Format dates
+    let labels = keys.map(k => {
+        if (k === 'No Data') return k;
+        let date = new Date(k);
+        return date.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' });
+    });
 
-    // Draw bars
-    keys.forEach(function(key, i) {
-        let barHeight = (values[i] / maxVal) * 200;
-        let x = i * 60 + 50;
-        let y = 250 - barHeight;
+    // Create gradient
+    const gradient = ctx.createLinearGradient(0, 0, 0, 280);
+    gradient.addColorStop(0, 'rgba(0, 212, 255, 0.8)');
+    gradient.addColorStop(1, 'rgba(0, 212, 255, 0.2)');
 
-        bar.fillStyle = "#00bcd4";
-        bar.fillRect(x, y, 40, barHeight);
-
-        // Day label
-        bar.fillStyle = "#000";
-        bar.font = "10px Arial";
-        bar.fillText(key.substring(5), x, 270);
-
-        // Value label
-        bar.fillText(values[i], x + 15, y - 5);
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Scans',
+                data: values,
+                backgroundColor: gradient,
+                borderColor: '#00d4ff',
+                borderWidth: 2,
+                borderRadius: 8,
+                hoverBackgroundColor: '#00d4ff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(17, 34, 64, 0.95)',
+                    titleColor: '#00d4ff',
+                    bodyColor: '#e6f1ff',
+                    borderColor: '#00d4ff',
+                    borderWidth: 1,
+                    padding: 12,
+                    titleFont: { family: 'Poppins', size: 13 },
+                    bodyFont: { family: 'Poppins', size: 13 }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#8892b0',
+                        font: { family: 'Poppins', size: 12 }
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#8892b0',
+                        font: { family: 'Poppins', size: 12 }
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            animation: {
+                duration: 1500,
+                easing: 'easeOutQuart'
+            }
+        }
     });
 }
 
-
+// ==================== PATTERNS ====================
 function showPatterns(logs) {
-
     let patterns = {};
 
-    logs.forEach(function(l) {
+    logs.forEach(l => {
         if (l.result) {
-            let key = l.result.toLowerCase()
-            .includes("phishing") ? "Phishing" :
-            l.result.toLowerCase()
-            .includes("safe") ? "Safe" : "Suspicious";
+            let key = l.result.toLowerCase().includes("phishing") ? "Phishing Detected" :
+                      l.result.toLowerCase().includes("safe") ? "Safe Results" : "Suspicious Activity";
 
             patterns[key] = (patterns[key] || 0) + 1;
         }
@@ -175,38 +228,144 @@ function showPatterns(logs) {
     let list = document.getElementById("patternsList");
     list.innerHTML = "";
 
-    Object.keys(patterns).forEach(function(p) {
+    Object.keys(patterns).forEach(p => {
         let li = document.createElement("li");
         li.innerText = p + ": " + patterns[p] + " detections";
         list.appendChild(li);
     });
+
+    if (Object.keys(patterns).length === 0) {
+        let li = document.createElement("li");
+        li.innerText = "No patterns detected yet";
+        list.appendChild(li);
+    }
 }
 
-
-// EXPORT REPORT
+// ==================== EXPORT REPORT ====================
 function exportReport() {
-
     let total = document.getElementById("totalScans").innerText;
     let phishing = document.getElementById("totalPhishing").innerText;
     let safe = document.getElementById("totalSafe").innerText;
     let suspicious = document.getElementById("totalSuspicious").innerText;
 
     let text = `
-PHISHGUARD - REPORT SUMMARY
-============================
+╔════════════════════════════════════════╗
+║     PHISHGUARD - REPORT SUMMARY        ║
+╚════════════════════════════════════════╝
+
 Generated: ${new Date().toLocaleString()}
 
-Total Scans    : ${total}
-Safe           : ${safe}
-Suspicious     : ${suspicious}
-Phishing       : ${phishing}
-============================
-PhishGuard Anti-Phishing System
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  STATISTICS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Total Scans    : ${total}
+  Safe Results   : ${safe}
+  Suspicious     : ${suspicious}
+  Phishing Found : ${phishing}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PhishGuard Anti-Phishing System
+  AI-Powered Detection & Analytics
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     `;
 
     let blob = new Blob([text], {type: "text/plain"});
     let link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "phishguard_report.txt";
+    link.download = "phishguard_report_" + new Date().toISOString().split('T')[0] + ".txt";
     link.click();
 }
+
+// ==================== PARTICLES.JS ====================
+if (typeof particlesJS !== 'undefined' && document.getElementById('particles-js')) {
+    particlesJS('particles-js', {
+        particles: {
+            number: { value: 60, density: { enable: true, value_area: 800 }},
+            color: { value: '#00d4ff' },
+            shape: { type: 'circle' },
+            opacity: { value: 0.5, random: true },
+            size: { value: 3, random: true },
+            line_linked: {
+                enable: true,
+                distance: 150,
+                color: '#00d4ff',
+                opacity: 0.3,
+                width: 1
+            },
+            move: {
+                enable: true,
+                speed: 1.5,
+                direction: 'none',
+                random: true,
+                out_mode: 'out'
+            }
+        },
+        interactivity: {
+            detect_on: 'window',
+            events: {
+                onhover: { enable: true, mode: 'grab' }
+            },
+            modes: {
+                grab: { distance: 150, line_linked: { opacity: 0.6 }}
+            }
+        },
+        retina_detect: true
+    });
+}
+
+// ==================== CUSTOM CURSOR ====================
+const cursorDot = document.querySelector('.cursor-dot');
+const cursorRing = document.querySelector('.cursor-ring');
+
+if (cursorDot && cursorRing) {
+    let mouseX = 0, mouseY = 0;
+    let dotX = 0, dotY = 0;
+    let ringX = 0, ringY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
+
+    function animateCursor() {
+        dotX += (mouseX - dotX) * 0.9;
+        dotY += (mouseY - dotY) * 0.9;
+        ringX += (mouseX - ringX) * 0.15;
+        ringY += (mouseY - ringY) * 0.15;
+
+        cursorDot.style.transform = `translate(${dotX}px, ${dotY}px) translate(-50%, -50%)`;
+        cursorRing.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+
+        requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    const hoverElements = document.querySelectorAll(
+        'a, button, .card, .chart-card, #patternsList li, .nav-links li'
+    );
+
+    hoverElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursorRing.classList.add('hover');
+            cursorDot.classList.add('hover');
+        });
+        el.addEventListener('mouseleave', () => {
+            cursorRing.classList.remove('hover');
+            cursorDot.classList.remove('hover');
+        });
+    });
+
+    document.addEventListener('mousedown', () => cursorRing.classList.add('click'));
+    document.addEventListener('mouseup', () => cursorRing.classList.remove('click'));
+}
+
+// ==================== NAVBAR ACTIVE LINK ====================
+const currentPath = window.location.pathname;
+document.querySelectorAll('.nav-links a').forEach(link => {
+    if (link.getAttribute('href') === currentPath) {
+        link.classList.add('active');
+    }
+});

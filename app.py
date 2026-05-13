@@ -406,16 +406,20 @@ def add_keyword():
     keyword = request.form['keyword']
     category = request.form['category']
 
-    conn = sqlite3.connect('phishing.db')
+    conn = sqlite3.connect('phishing.db', timeout=10)
     cursor = conn.cursor()
 
-    cursor.execute(
-        "INSERT INTO phishing_keywords (keyword, category) VALUES (?, ?)",
-        (keyword, category)
-    )
-
-    conn.commit()
-    conn.close()
+    try:
+        cursor.execute(
+            "INSERT INTO phishing_keywords (keyword, category) VALUES (?, ?)",
+            (keyword, category)
+        )
+        conn.commit()
+    except sqlite3.OperationalError as e:
+        print(f"Database error: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
     return redirect('/admin')
 
@@ -425,16 +429,20 @@ def add_keyword():
 def add_url():
     url = request.form['url']
 
-    conn = sqlite3.connect('phishing.db')
+    conn = sqlite3.connect('phishing.db', timeout=10)
     cursor = conn.cursor()
 
-    cursor.execute(
-        "INSERT INTO blacklist (url) VALUES (?)",
-        (url,)
-    )
-
-    conn.commit()
-    conn.close()
+    try:
+        cursor.execute(
+            "INSERT INTO blacklist (url) VALUES (?)",
+            (url,)
+        )
+        conn.commit()
+    except sqlite3.OperationalError as e:
+        print(f"Database error: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
     return redirect('/admin')
 
