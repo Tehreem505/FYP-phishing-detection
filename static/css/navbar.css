@@ -95,6 +95,15 @@
     width: 100%;
 }
 
+.navbar .nav-links li a.active {
+    color: #00d4ff;
+    text-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+}
+
+.navbar .nav-links li a.active::after {
+    width: 100%;
+}
+
 /* ==================== SPACER ==================== */
 .nav-spacer {
     height: 70px;
