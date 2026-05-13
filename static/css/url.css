@@ -1,73 +1,189 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary: #0a192f;
+    --secondary: #112240;
+    --accent: #00d4ff;
+    --accent-glow: rgba(0, 212, 255, 0.3);
+    --success: #00b894;
+    --warning: #fdcb6e;
+    --danger: #ff6b6b;
+    --text-white: #e6f1ff;
+    --text-gray: #8892b0;
+    --card-bg: rgba(17, 34, 64, 0.8);
+    --border: rgba(255, 255, 255, 0.1);
+}
+
 body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--primary);
+    color: var(--text-white);
     margin: 0;
-    font-family: Arial;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #0a192f;
-    padding: 15px 40px;
+/* ==================== SCROLLBAR ==================== */
+::-webkit-scrollbar {
+    width: 8px;
 }
 
-.logo {
-    color: white;
+::-webkit-scrollbar-track {
+    background: var(--primary);
 }
 
-.nav-links {
-    list-style: none;
-    display: flex;
-    gap: 20px;
+::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 4px;
 }
-
-.nav-links li a {
-    color: white;
-    text-decoration: none;
-}
-
-.nav-links li a:hover {
-    color: #00bcd4;
-}
-
 
 .container {
+    max-width: 700px;
+    margin: 60px auto;
+    padding: 40px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     text-align: center;
-    margin-top: 60px;
 }
 
-input {
-    width: 400px;
-    padding: 10px;
+h1 {
+    font-size: 32px;
+    margin-bottom: 30px;
+    color: var(--accent);
+    text-shadow: 0 0 20px var(--accent-glow);
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-white);
+    font-size: 16px;
+    font-family: 'Courier New', monospace;
+    outline: none;
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
+}
+
+input[type="text"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px var(--accent-glow);
+}
+
+input[type="text"]::placeholder {
+    color: var(--text-gray);
 }
 
 button {
-    padding: 10px 20px;
-    background: #00bcd4;
+    padding: 14px 40px;
+    background: var(--accent);
+    color: var(--primary);
     border: none;
-    color: white;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px var(--accent-glow);
 }
 
 /* RESULT BOX */
 .result-box {
-    margin-top: 20px;
-    padding: 20px;
-    border-radius: 10px;
-    display: inline-block;
+    margin-top: 30px;
+    padding: 30px;
+    border-radius: 16px;
+    text-align: left;
+    animation: fadeIn 0.5s ease;
+    border: 1px solid var(--border);
 }
 
-.safe {
-    background: #d4edda;
-    color: green;
+.result-box.safe {
+    background: rgba(0, 184, 148, 0.15);
+    border-color: var(--success);
 }
 
-.suspicious {
-    background: #fff3cd;
-    color: #856404;
+.result-box.suspicious {
+    background: rgba(253, 203, 110, 0.15);
+    border-color: var(--warning);
 }
 
-.phishing {
-    background: #f8d7da;
-    color: red;
+.result-box.phishing {
+    background: rgba(255, 107, 107, 0.15);
+    border-color: var(--danger);
+}
+
+.result-box h2 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.result-box p {
+    color: var(--text-gray);
+    margin-bottom: 15px;
+}
+
+.result-box ul {
+    list-style: none;
+    padding: 0;
+}
+
+.result-box ul li {
+    padding: 8px 15px;
+    margin: 5px 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--text-gray);
+    border-left: 3px solid var(--accent);
+}
+
+/* BADGES */
+.badge {
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.badge.safe {
+    background: var(--success);
+    color: white;
+}
+
+.badge.suspicious {
+    background: var(--warning);
+    color: #333;
+}
+
+.badge.phishing {
+    background: var(--danger);
+    color: white;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.6); }
+    70% { box-shadow: 0 0 0 12px rgba(255, 107, 107, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+}
+
+/* SPINNER */
+#spinner {
+    font-size: 16px;
+    color: var(--accent);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }

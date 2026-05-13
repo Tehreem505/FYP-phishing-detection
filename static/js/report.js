@@ -1,106 +1,212 @@
-
-// ---------------- LOAD DATA FROM BACKEND ----------------
-let logs = [];
-
+// Load data from backend
 fetch('/report-data')
 .then(res => res.json())
 .then(data => {
-    logs = data;
-    generateReport();
+    let logs = data.logs;
+
+    if (!logs || logs.length === 0) {
+        document.getElementById("totalScans").innerText = "0";
+        document.getElementById("totalPhishing").innerText = "0";
+        document.getElementById("totalSafe").innerText = "0";
+        document.getElementById("totalSuspicious").innerText = "0";
+        return;
+    }
+
+    generateReport(logs);
+})
+.catch(err => {
+    console.log("Error loading report data:", err);
 });
 
-function generateReport() {
 
-    // ---------------- CALCULATIONS ----------------
+function generateReport(logs) {
+
+    // CALCULATIONS
     let totalScans = logs.length;
-    let phishing = logs.filter(l => l.result === "Phishing").length;
-    let safe = logs.filter(l => l.result === "Safe").length;
-    let suspicious = logs.filter(l => l.result === "Suspicious").length;
 
-    // ---------------- UPDATE STATS ----------------
+    let phishing = logs.filter(l =>
+        l.result && l.result.toLowerCase()
+        .includes("phishing")
+    ).length;
+
+    let safe = logs.filter(l =>
+        l.result && l.result.toLowerCase()
+        .includes("safe")
+    ).length;
+
+    let suspicious = logs.filter(l =>
+        l.result && l.result.toLowerCase()
+        .includes("suspicious")
+    ).length;
+
+    // UPDATE STATS
     document.getElementById("totalScans").innerText = totalScans;
     document.getElementById("totalPhishing").innerText = phishing;
     document.getElementById("totalSafe").innerText = safe;
     document.getElementById("totalSuspicious").innerText = suspicious;
 
-    // ---------------- PIE CHART ----------------
-    let pie = document.getElementById("pieChart").getContext("2d");
+    // PIE CHART
+    drawPieChart(safe, suspicious, phishing);
+
+    // BAR CHART
+    drawBarChart(logs);
+
+    // PATTERNS
+    showPatterns(logs);
+}
+
+
+function drawPieChart(safe, suspicious, phishing) {
+
+    let canvas = document.getElementById("pieChart");
+    let pie = canvas.getContext("2d");
+
     pie.clearRect(0, 0, 300, 300);
 
-    let total = phishing + safe + suspicious || 1;
+    let total = safe + suspicious + phishing;
 
-    let angles = [
-        (safe / total) * 2 * Math.PI,
-        (suspicious / total) * 2 * Math.PI,
-        (phishing / total) * 2 * Math.PI
-    ];
-
-    let colors = ["green", "orange", "red"];
-
-    let start = 0;
-    for (let i = 0; i < angles.length; i++) {
+    if (total === 0) {
+        pie.fillStyle = "#ccc";
         pie.beginPath();
-        pie.moveTo(150, 150);
-        pie.arc(150, 150, 100, start, start + angles[i]);
-        pie.fillStyle = colors[i];
+        pie.arc(150, 150, 100, 0, 2 * Math.PI);
         pie.fill();
-        start += angles[i];
+        return;
     }
 
-    // ---------------- BAR CHART (last 7 days) ----------------
-    let bar = document.getElementById("barChart").getContext("2d");
+    let data = [
+        { value: safe, color: "#2ecc71" },
+        { value: suspicious, color: "#f39c12" },
+        { value: phishing, color: "#e74c3c" }
+    ];
+
+    let start = 0;
+
+    data.forEach(function(item) {
+        let angle = (item.value / total) * 2 * Math.PI;
+        pie.beginPath();
+        pie.moveTo(150, 150);
+        pie.arc(150, 150, 100, start, start + angle);
+        pie.fillStyle = item.color;
+        pie.fill();
+        start += angle;
+    });
+
+    // LEGEND
+    pie.fillStyle = "#2ecc71";
+    pie.fillRect(10, 270, 15, 15);
+    pie.fillStyle = "#000";
+    pie.fillText("Safe: " + safe, 30, 282);
+
+    pie.fillStyle = "#f39c12";
+    pie.fillRect(100, 270, 15, 15);
+    pie.fillStyle = "#000";
+    pie.fillText("Suspicious: " + suspicious, 120, 282);
+
+    pie.fillStyle = "#e74c3c";
+    pie.fillRect(220, 270, 15, 15);
+    pie.fillStyle = "#000";
+    pie.fillText("Phishing: " + phishing, 240, 282);
+}
+
+
+function drawBarChart(logs) {
+
+    let canvas = document.getElementById("barChart");
+    let bar = canvas.getContext("2d");
+
     bar.clearRect(0, 0, 500, 300);
 
+    // Get last 7 days
     let days = {};
 
-    logs.forEach(l => {
-        days[l.date] = (days[l.date] || 0) + 1;
+    logs.forEach(function(l) {
+        if (l.date) {
+            let day = l.date.substring(0, 10);
+            days[day] = (days[day] || 0) + 1;
+        }
     });
 
     let keys = Object.keys(days).slice(-7);
     let values = keys.map(k => days[k]);
 
-    for (let i = 0; i < values.length; i++) {
-        bar.fillRect(i * 60 + 50, 300 - values[i] * 30, 40, values[i] * 30);
+    if (keys.length === 0) {
+        bar.fillStyle = "#ccc";
+        bar.fillText("No data available", 200, 150);
+        return;
     }
 
-    // ---------------- PATTERNS ----------------
+    let maxVal = Math.max(...values);
+
+    // Draw bars
+    keys.forEach(function(key, i) {
+        let barHeight = (values[i] / maxVal) * 200;
+        let x = i * 60 + 50;
+        let y = 250 - barHeight;
+
+        bar.fillStyle = "#00bcd4";
+        bar.fillRect(x, y, 40, barHeight);
+
+        // Day label
+        bar.fillStyle = "#000";
+        bar.font = "10px Arial";
+        bar.fillText(key.substring(5), x, 270);
+
+        // Value label
+        bar.fillText(values[i], x + 15, y - 5);
+    });
+}
+
+
+function showPatterns(logs) {
+
     let patterns = {};
-    logs.forEach(l => {
-        patterns[l.input] = (patterns[l.input] || 0) + 1;
+
+    logs.forEach(function(l) {
+        if (l.result) {
+            let key = l.result.toLowerCase()
+            .includes("phishing") ? "Phishing" :
+            l.result.toLowerCase()
+            .includes("safe") ? "Safe" : "Suspicious";
+
+            patterns[key] = (patterns[key] || 0) + 1;
+        }
     });
 
     let list = document.getElementById("patternsList");
     list.innerHTML = "";
 
-    Object.keys(patterns).forEach(p => {
+    Object.keys(patterns).forEach(function(p) {
         let li = document.createElement("li");
-        li.innerText = p + " (" + patterns[p] + ")";
+        li.innerText = p + ": " + patterns[p] + " detections";
         list.appendChild(li);
     });
 }
 
 
-// ---------------- EXPORT REPORT ----------------
+// EXPORT REPORT
 function exportReport() {
 
-    let safe = logs.filter(l => l.result === "Safe").length;
-    let phishing = logs.filter(l => l.result === "Phishing").length;
-    let suspicious = logs.filter(l => l.result === "Suspicious").length;
+    let total = document.getElementById("totalScans").innerText;
+    let phishing = document.getElementById("totalPhishing").innerText;
+    let safe = document.getElementById("totalSafe").innerText;
+    let suspicious = document.getElementById("totalSuspicious").innerText;
 
     let text = `
-REPORT SUMMARY
---------------
-Total Scans: ${logs.length}
-Safe: ${safe}
-Suspicious: ${suspicious}
-Phishing: ${phishing}
-`;
+PHISHGUARD - REPORT SUMMARY
+============================
+Generated: ${new Date().toLocaleString()}
+
+Total Scans    : ${total}
+Safe           : ${safe}
+Suspicious     : ${suspicious}
+Phishing       : ${phishing}
+============================
+PhishGuard Anti-Phishing System
+    `;
 
     let blob = new Blob([text], {type: "text/plain"});
     let link = document.createElement("a");
-
     link.href = URL.createObjectURL(blob);
-    link.download = "phishing_report.txt";
+    link.download = "phishguard_report.txt";
     link.click();
 }

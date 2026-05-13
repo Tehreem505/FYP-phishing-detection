@@ -2,7 +2,8 @@
 <html>
 <head>
     <title>URL Phishing Checker</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/url.css') }}">
+    <link rel="stylesheet" 
+    href="{{ url_for('static', filename='css/url.css') }}">
 </head>
 
 <body>
@@ -13,21 +14,39 @@
 
         <h1>URL Phishing Checker</h1>
 
-        <form method="POST" action="/check-url">
-            <input type="text" name="url" placeholder="Paste URL here..." required>
-            <button type="submit">Check URL</button>
+        <form action="/check-url" method="POST" 
+        id="urlForm">
+            <input type="text" 
+            name="url" 
+            id="urlInput"
+            placeholder="Paste URL here..." 
+            required>
+            <button type="submit" id="checkBtn">
+                Check URL
+            </button>
         </form>
+
+        <!-- LOADING SPINNER -->
+        <div id="spinner" style="display:none; 
+        text-align:center; margin-top:20px;">
+            <p>⏳ Analyzing URL please wait...</p>
+        </div>
 
         <!-- RESULT BOX -->
         {% if result %}
-        <div class="result-box {{ result.status|lower }}">
+        <div class="result-box {{ result }}">
 
-            <h2>Status: {{ result.status }}</h2>
-            <p>Confidence: {{ result.confidence }}%</p>
+            <h2>Status: 
+                <span class="badge {{ result }}">
+                    {{ result | upper }}
+                </span>
+            </h2>
+
+            <p>Confidence: <strong>{{ confidence }}%</strong></p>
 
             <h4>Reasons Found:</h4>
             <ul>
-                {% for r in result.reasons %}
+                {% for r in reasons %}
                     <li>{{ r }}</li>
                 {% endfor %}
             </ul>
@@ -36,6 +55,9 @@
         {% endif %}
 
     </div>
+
+    <script src="{{ url_for('static', 
+    filename='js/urlChecker.js') }}"></script>
 
 </body>
 </html>
