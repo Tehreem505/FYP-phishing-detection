@@ -1,0 +1,38 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+}
+
+body {
+    min-height: 100vh;
+}
+
+/* Sirf body scroll kare */
+.navbar,
+.nav-links,
+.nav-links li,
+.container,
+.result-box,
+.cards,
+.card,
+section,
+main,
+div {
+    max-height: none !important;
+}
+
+/* Important: page containers apni scrollbar na banayein */
+.container,
+.result-box,
+.cards,
+.card,
+.nav-links {
+    overflow: visible !important;
+}

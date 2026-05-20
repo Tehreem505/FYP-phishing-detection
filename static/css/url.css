@@ -14,10 +14,16 @@
     --border: rgba(255, 255, 255, 0.1);
 }
 
+html, body {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: auto;
+}
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 html {
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
 }
 
@@ -663,3 +669,4 @@ input, textarea, button, a { cursor: none !important; }
     * { cursor: auto !important; }
     .cursor-dot, .cursor-ring { display: none !important; }
 }
+

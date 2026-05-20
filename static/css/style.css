@@ -20,6 +20,34 @@
     box-sizing: border-box;
 }
 
+
+/* ==================== DOUBLE SCROLLBAR FIX ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+body {
+    overflow-x: hidden;
+    overflow-y: auto;
+    min-height: 100vh;
+}
+
+/* Hide extra scrollbars from containers */
+.container,
+.login-container,
+.login-box,
+.result-box,
+.cards,
+.table-section {
+    overflow: visible;
+}
 html {
     overflow-y: scroll;
     overflow-x: hidden;
@@ -155,7 +183,7 @@ body {
 .hero-buttons .btn {
     background: var(--accent);
     color: var(--primary);
-    box-shadow: 0 5px 20px var(--accent-glow);
+   
 }
 
 .hero-buttons .btn:hover {
